@@ -18,6 +18,7 @@
 .env.test.local
 .env.production.local
 
+/src/react-app-env.d.ts
 cost-splitter.iml
 /.idea
 
