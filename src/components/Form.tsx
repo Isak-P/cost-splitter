@@ -1,40 +1,45 @@
 import React from 'react';
 import './Form.css';
-import {useForm, useFieldArray, Controller} from "react-hook-form"
+import {useForm, useFieldArray} from "react-hook-form"
 
-const Form = () => {
-
-  const {register, control, handleSubmit, reset, trigger, setError} = useForm({
-  //  defaultValues: {name:"name", amount:0}
-  });
-  const {fields, append, prepend, remove, swap, move, insert} = useFieldArray({
+const Form:React.FC<any> = ({onComplete}) => {
+  const {register, control, handleSubmit} = useForm();
+  const {fields, append, remove} = useFieldArray({
     control,
-    name: "fieldArray"
+    name: "costform"
   });
+
+  const doSubmit = (data:any) => {
+    let returnData = data.costform;
+    for (let i = 0; i < returnData.length; i++) {
+      returnData[i].amount = parseInt(returnData[i].amount)
+    }
+    //console.log(returnData)
+    onComplete(returnData)
+  }
 
   return (
-    <form onSubmit={handleSubmit(data => console.log(data))}>
+    <form onSubmit={handleSubmit(doSubmit)}>
       <ul>
         {fields.map((item, index) => (
           <li key={item.id}>
-            <input
-              name={`fieldArray[${index}].name`}
-              ref={register()}
+            <input className={"name"}
+              name={`costform[${index}].name`}
+              placeholder={"Name"}
+              ref={register({required: true})}
               defaultValue={item.name}
             />
-
-            <Controller
-              as={<input />}
-              name={`fieldArray[${index}].amount`}
-              control={control}
+            <input type="number"
+              name={`costform[${index}].amount`}
+              placeholder={"Amount"}
+              ref={register({required: true})}
               defaultValue={item.amount}
             />
-
             <button type="button" onClick={() => remove(index)}>Delete</button>
           </li>
         ))}
       </ul>
-      <button type="button" onClick={() => append({name:"name", amount: 0})}>
+      <button type="button" onClick={() => append({name:"", amount: null})}>
         Add person
       </button>
       <button type="submit">Calculate</button>
